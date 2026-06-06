@@ -31,7 +31,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
   ip_protocol = "tcp"
   from_port   = 22
   to_port     = 22
-  cidr_ipv4   = var.ssh_ipv4
+  cidr_ipv4   = var.ssh_cidr_ipv4
 }
 
 # Outbound rule - Allow all outbound
@@ -43,10 +43,22 @@ resource "aws_vpc_security_group_egress_rule" "allow_outbound" {
   cidr_ipv4   = "0.0.0.0/0"
 }
 
+# Create key pair resource
+resource "aws_key_pair" "minecraft_key" {
+  key_name   = "minecraft-aws-server-key"
+  public_key = file(var.ssh_public_key_path)
+
+  tags = {
+    Name = "minecraft-aws-server-key"
+  }
+}
+
 # Create the server instance
 resource "aws_instance" "minecraft_server" {
-  ami           = var.ami_ubuntu_latest
-  instance_type = var.instance_type
+  ami                    = var.ami_ubuntu_latest
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.minecraft_key.key_name
+  vpc_security_group_ids = [aws_security_group.minecraft_sg.id]
 
   tags = {
     Name = "minecraft_server"

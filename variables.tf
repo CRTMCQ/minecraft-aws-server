@@ -10,7 +10,12 @@ variable "instance_type" {
   default     = "t3.small"
 }
 
-variable "ssh_ipv4" {
+variable "ssh_cidr_ipv4" {
   description = "The IPv4 address/CIDR block allowed to SSH into the instance"
-  type = string
+  type        = string
+}
+
+variable "ssh_public_key_path" {
+  description = "Path to the public SSH key"
+  type        = string
 }

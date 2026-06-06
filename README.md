@@ -1,6 +1,6 @@
 # Automated Minecraft Server Deployment
 
-This project follows Infrastructure as Code (IaC) principles to fully automate the entire provisioning and configuration process of a Minecraft server on AWS infrastructure.
+This project follows Infrastructure as Code (IaC) principles to automate the provisioning and configuration of a Minecraft server hosted on AWS infrastructure.
 
 
 ## Required Tools
@@ -9,15 +9,24 @@ This project follows Infrastructure as Code (IaC) principles to fully automate t
 - AWS CLI (with valid AWS credentials configured)
 
 
-## Configuring SSH
+## SSH Setup
 
-SSH access is intended for automated configuration and admin use only.
+SSH access is intended for automated configuration and administrative use only.
 
-The allowed SSH address is stored locally in ```terraform.tfvars``` as the ```ssh_cidr_ipv4``` variable. This is intended to exclude network information from version control through ```.gitignore```.
-
-Create a local ```terraform.tfvars``` file with the following content:
+A key pair is required to SSH into the server instance. Use an existing SSH key pair or generate a new one with ```ssh-keygen```:
 
 ```
-ssh_cidr_ipv4 = "YOUR.PUBLIC.IP.CIDR"
+ssh-keygen -t ed25519 -f <YOUR_PATH_AND_NAME_HERE>
+```
+
+The Terraform configuration imports the public key (```.pub```) into AWS while the private key remains on the local machine.
+
+The allowed SSH CIDR block is stored locally in ```terraform.tfvars``` as the ```ssh_cidr_ipv4``` variable. This prevents network information from being committed to version control with ```terraform.tfvars``` excluded through ```.gitignore```.
+
+Create a local ```terraform.tfvars``` file in the project directory with the following content:
+
+```
+ssh_cidr_ipv4       = "YOUR.PUBLIC.IP.ADDRESS/32"
+ssh_public_key_path = "YOUR_PATH_TO_PUBLIC_KEY.pub"
 ```
 
