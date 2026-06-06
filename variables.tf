@@ -9,3 +9,8 @@ variable "instance_type" {
   type        = string
   default     = "t3.small"
 }
+
+variable "ssh_ipv4" {
+  description = "The IPv4 address/CIDR block allowed to SSH into the instance"
+  type = string
+}
