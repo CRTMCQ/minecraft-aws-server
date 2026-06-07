@@ -41,6 +41,9 @@
           WorkingDirectory=/home/ubuntu/
           ExecStart=/usr/bin/java -Xmx{{ server_memory_max }} -Xms1G -jar server.jar nogui
           Restart=on-failure
+          RestartSec=10
+          SuccessExitStatus=143
+          TimeoutStopSec=90
 
           [Install]
           WantedBy=multi-user.target
