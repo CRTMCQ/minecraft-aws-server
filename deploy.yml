@@ -1,0 +1,58 @@
+---
+ - name: Deploy Minecraft server
+   hosts: minecraft_server
+   become: true
+
+   vars:
+    java_package: "openjdk-25-jre-headless"
+    server_jar_url: "https://piston-data.mojang.com/v1/objects/97ccd4c0ed3f81bbb7bfacddd1090b0c56f9bc51/server.jar"
+    server_memory_max: "1500M"
+
+   tasks:
+    - name: Update apt
+      apt:
+        update_cache: true
+
+    - name: Install required Java package
+      apt:
+        name: "{{ java_package }}"
+        state: present
+
+    - name: Download Minecraft_server.jar
+      get_url:
+        url: "{{ server_jar_url }}"
+        dest: /home/ubuntu/server.jar
+
+    - name: Validate EULA
+      copy:
+        dest: /home/ubuntu/eula.txt
+        content: "eula=true\n"
+
+    - name: Create Minecraft systemd service
+      copy:
+        dest: /etc/systemd/system/minecraft.service
+        content: |
+          [Unit]
+          Description=Minecraft Server
+          After=network.target
+
+          [Service]
+          User=ubuntu
+          WorkingDirectory=/home/ubuntu/
+          ExecStart=/usr/bin/java -Xmx{{ server_memory_max }} -Xms1G -jar server.jar nogui
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+        
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true
+
+    - name: Enable/Start the Minecraft service
+      systemd:
+        name: minecraft
+        enabled: true
+        state: started
+
+...
