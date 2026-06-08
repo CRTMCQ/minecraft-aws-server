@@ -57,6 +57,8 @@ ssh_public_key_path = "YOUR_PUBLIC_KEY_PATH.pub"
 
 ## Pipeline Diagram
 
+![Pipeline Diagram](images/pipeline_diagram.png)
+
 
 
 ## Commands to Run
