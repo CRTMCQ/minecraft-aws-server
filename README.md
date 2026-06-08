@@ -5,8 +5,8 @@ This project follows Infrastructure as Code (IaC) principles to automate the pro
 
 ## Required Tools
 
-- Terraform
-- AWS CLI (with valid AWS credentials configured)
+- [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) (with valid AWS credentials configured)
 
 
 ## SSH Setup
@@ -30,3 +30,39 @@ ssh_cidr_ipv4       = "YOUR.PUBLIC.IP.ADDRESS/32"
 ssh_public_key_path = "YOUR_PATH_TO_PUBLIC_KEY.pub"
 ```
 
+#######################
+
+Setup hosts.ini file
+
+Ansible
+
+ - may require manual SSH from WSL / Ansible control node to instance at least once to establish known hosts
+
+
+
+References
+ - Safer shutdown settings https://kibitkin.info/minecraft-systemd-autostart/
+ - Creating Ansible hosts.ini file https://oneuptime.com/blog/post/2025-12-18-create-ansible-inventory-from-terraform/view 
+
+
+May need to manually SSH connect from the ansible control node to accept the new host key on first time around
+
+
+Pipeline
+ - WSL Ubuntu control machine
+    - AWS CLI
+    - Terraform
+    - Ansible
+    - SSH Keys
+---->
+ - AWS EC2 Ubuntu instance
+---->
+ - Minecraft server managed by systemd
+
+
+
+ Deployment Process
+ ```
+ terraform apply
+ ansible-playbook -i hosts.ini deploy.yml
+ ```

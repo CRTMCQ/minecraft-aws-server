@@ -4,6 +4,12 @@ variable "ami_ubuntu_latest" {
   default     = "ami-0d13e2317a7e75c95"
 }
 
+variable "aws_region" {
+  description = "Selected region for the AWS provider"
+  type        = string
+  default     = "us-west-2"
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
