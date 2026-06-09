@@ -64,3 +64,12 @@ resource "aws_instance" "minecraft_server" {
     Name = "minecraft_server"
   }
 }
+
+# Create Ansible hosts.ini file
+resource "local_file" "ansible_hosts" {
+  filename = "${path.module}/../ansible/hosts.ini"
+  content = templatefile("${path.module}/hosts.tftpl", {
+    public_ip        = aws_instance.minecraft_server.public_ip
+    private_key_path = var.ssh_private_key_path
+  })
+}
