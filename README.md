@@ -1,10 +1,10 @@
-# Automated Minecraft Server Deployment
+# AWS Minecraft Server Automation
 
 ## Background
 
 This project follows an Infrastructure as Code approach to automate the provisioning, configuration, and deployment of a Minecraft server hosted on AWS infrastructure. The overall goal is to deploy the server entirely through code without interacting with the AWS Management Console.
 
-Terraform is used to provision AWS resources, namely an EC2 instance and security group, along with handling an SSH key pair configuration.
+Terraform is used to provision AWS resources, namely an EC2 instance and security group, along with handling an SSH key pair configuration. It also dynamically generates the ```hosts.ini``` file used by Ansible.
 
 Ansible configures the instance by installing Java, downloading the Minecraft server files, and configuring the server as a persistent systemd service. The service is configured to automatically restart when the EC2 instance reboots.
 
@@ -70,16 +70,9 @@ terraform init
 terraform apply
 ```
 
-After running ```terraform apply```, Terraform outputs the public IPv4 address of the new EC2 instance to the terminal.
+After running ```terraform apply```, the public IPv4 address of the new EC2 instance is output to the terminal. Terraform also generates the ```ansible/hosts.ini``` file the public IP address and configured SSH key path variable. This file is then used by Ansible to connect to the EC2 instance automatically.
 
-Create a ```hosts.ini``` file inside the ```ansible/``` directory using the new public IP address and replacing the placeholder values. This defines the instance as an Ansible host using the desired SSH key. Including the ```StrictHostKeyChecking=accept-new``` argument allows the SSH host key to be trusted automatically during first-time server deployment, avoiding a manual trust prompt during initial deployment.
-
-```
-[minecraft_server]
-INSTANCE.PUBLIC.IP.ADDRESS ansible_user=ubuntu ansible_ssh_private_key_file=/YOUR_PRIVATE_KEY_PATH ansible_ssh_common_args='-o StrictHostKeyChecking=accept-new'
-```
-
-Run the Ansible ```deploy.yml``` playbook to deploy and configure the Minecraft server. The playbook installs Java, downloads Minecraft server files, accepts the required EULA, starts the Minecraft server, and configures the ```minecraft``` systemd service for autostart functionality.
+Run the Ansible ```deploy.yml``` playbook to deploy and configure the Minecraft server. The playbook installs Java, downloads Minecraft server files, accepts the required EULA, starts the Minecraft server, and configures the ```minecraft``` systemd service for automatic startup on reboot.
 ```
 cd ../ansible
 ansible-playbook -i hosts.ini deploy.yml
@@ -109,5 +102,7 @@ nmap -sV -Pn -p T:25565 <SERVER_PUBLIC_IP>
  - [Safer systemd Shutdown Settings](https://kibitkin.info/minecraft-systemd-autostart/)
 
  - [Minecraft systemd Service Example](https://www.shells.com/l/en-US/tutorial/0-A-Guide-to-Installing-a-Minecraft-Server-on-Linux-Ubuntu)
+
+ - [How to Create Ansible Inventory from Terraform](https://oneuptime.com/blog/post/2025-12-18-create-ansible-inventory-from-terraform/view)
 
  
